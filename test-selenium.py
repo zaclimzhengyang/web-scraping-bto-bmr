@@ -1,5 +1,8 @@
+from typing import List
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
@@ -34,7 +37,56 @@ loginUser()
 # time.sleep(20)
 
 # after logging in
-driver.find_element(By.CLASS_NAME, "primary-nav-link").click()
+# component_list = driver.find_element(By.CLASS_NAME, "primary-nav")
+# for element in component_list:
+#     print(element.text)
+driver.implicitly_wait(5)
+# find_element > return 1 element
+# find_elements > return list of elements
+nav_list: WebElement = driver.find_element(By.CLASS_NAME, "primary-nav") # parent component
+print(f"nav_list: {nav_list.text}, {nav_list.tag_name}")
+unordered_list: WebElement = nav_list.find_element(By.TAG_NAME, "ul") # children component
+li_items: List[WebElement] = unordered_list.find_elements(By.TAG_NAME, "li") # returns a list of children component
+print(f"unordered_list: {unordered_list.text}, {unordered_list.tag_name}")
+for element in li_items:
+    if element.text == "My Profile":
+        driver.implicitly_wait(5)
+        clickable_element = element.find_element(By.TAG_NAME, "a")
+        clickable_element.click()
+        break
+driver.implicitly_wait(5)
+bto_projects = driver.find_element(By.TAG_NAME, "app-your-flat-application") # parent component consists of 2 childrent
+driver.implicitly_wait(5)
+projects = bto_projects.find_elements(By.TAG_NAME, "app-selection-flat-cards") # children component in list form
+driver.implicitly_wait(5)
+for project in projects: # loop through the children component
+    # check project.text against name of project
+    if project.text == """BTO
+Bukit Merah (May 2022)
+Applied flat type:
+4-Room""":
+        clickable_element = project.find_element(By.TAG_NAME, "a")
+        clickable_element.click()
+
+bmr_project = driver.find_element(By.CLASS_NAME, "card-body")
+# print(f"bmr_project: {bmr_project.text}, {bmr_project.tag_name}")
+bmr_project.click()
+
+form_rows = driver.find_elements(By.TAG_NAME, "select")
+
+for index, form_row in enumerate(form_rows):
+    # if "Choose Ethnic Type" in form_row.text:
+    print(f"index: {index}, form_row.text: {form_row.text}")
+# print(row_mb_5.text)
+# ethnic_type = row_mb_5.find_element(By.CLASS_NAME, "col-lg-4 col-md-6")
+# print(ethnic_type.text)
+# selects = row_mb_5.find_elements(By.TAG_NAME, "select")
+#
+# for index, select in enumerate(selects):
+#     print(f"index: {index}, select.text: {select.text}")
+
+# driver.find_element(By.TAG_NAME, "app-selection-flat-cards").click()
+# driver.find_element(By.CLASS_NAME, "primary-nav-item js-primary-nav").click()
 # driver.find_element(By.CLASS_NAME, "primary-nav-link").click()
 # driver.find_element(By.NAME, "My Profile").click()
 
